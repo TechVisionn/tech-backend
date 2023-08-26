@@ -16,6 +16,8 @@ plyer==2.1.0
 pyasn1==0.4.8
 pycparser==2.21
 pymongo==4.5.0
+pypiwin32==223
+pywin32==306
 PyYAML==6.0
 requests==2.31.0
 rsa==4.9
