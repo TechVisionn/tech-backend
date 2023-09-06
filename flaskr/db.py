@@ -1,7 +1,6 @@
+import config_app as ca
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
-
-import config_app as ca
 
 db_instance = SQLAlchemy()
 

@@ -1,6 +1,6 @@
 from flask import Flask
-from flaskr.db import config_sql_alchemy, db_instance
 
+from flaskr.db import config_sql_alchemy, db_instance
 
 app = Flask(__name__)
 
