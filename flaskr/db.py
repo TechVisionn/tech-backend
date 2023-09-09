@@ -1,4 +1,4 @@
-import config_app as ca
+import flaskr.config_app as ca
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 

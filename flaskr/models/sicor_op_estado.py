@@ -3,7 +3,7 @@ from sqlalchemy import PrimaryKeyConstraint
 from flaskr.db import db_instance
 
 
-class SicorOpEstado(db_instance.Model):
+class SicorOpEstadoModel(db_instance.Model):
     __tablename__ = "sicor_operacao_por_estado"
     __table_args__ = (PrimaryKeyConstraint("ref_bacen", "nu_ordem"),)
 
