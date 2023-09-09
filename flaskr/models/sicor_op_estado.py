@@ -1,12 +1,15 @@
-from flaskr.db import db_instance, db_persist
-from geoalchemy2 import Geometry
+from sqlalchemy import PrimaryKeyConstraint
+
+from flaskr.db import db_instance
 
 
-class SicorOpEstado:
+class SicorOpEstadoModel(db_instance.Model):
     __tablename__ = "sicor_operacao_por_estado"
+    __table_args__ = (PrimaryKeyConstraint("ref_bacen", "nu_ordem"),)
 
-    ref_bacen = db_instance.Column(db_instance.Integer, primary_key=True)
-    nu_ordem = db_instance.Column(db_instance.Integer, primary_key=True)
+    ref_bacen = db_instance.Column(db_instance.Integer, index=True, nullable=False)
+    nu_ordem = db_instance.Column(db_instance.Integer, index=True, nullable=False)
+
     cd_estado = db_instance.Column(db_instance.String(3))
     dt_fim_colheita = db_instance.Column(db_instance.Date)
     dt_fim_plantio = db_instance.Column(db_instance.Date)
@@ -20,10 +23,7 @@ class SicorOpEstado:
     vl_juros = db_instance.Column(db_instance.Float)
     vl_juros_enc_finan_posfix = db_instance.Column(db_instance.Float)
     vl_area_financ = db_instance.Column(db_instance.Float)
-    nu_identificador = db_instance.Column(db_instance.Integer)
-    vl_vertices = db_instance.Column(db_instance.Geometry(geometry_type="POLYGON"))
-    cgl_vl_altitude = db_instance.Column(db_instance.Float)
 
-    @db_persist
-    def save(self):
-        db_instance.session.merge(self)
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()
