@@ -1,10 +1,12 @@
+from flask import request
 from flask_restful import Resource
 from flask import jsonify
 from flaskr.models.sicor_gleba import SicorGlebaModel
  
 class GlebaResource(Resource):
-    def get(self):
-        glebas = SicorGlebaModel.get_all()
+    def post(self):
+        ref_bacen = request.json.get("ref_bacen")
+        glebas = SicorGlebaModel.get_glebas_per_ref_bacen(ref_bacen)
         gleba_dicts = []
         for gleba in glebas:
             gleba_dict = {

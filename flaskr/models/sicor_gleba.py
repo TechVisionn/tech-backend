@@ -8,8 +8,8 @@ from flaskr.models.sicor_op_estado import SicorOpEstadoModel
 
 
 class SicorGlebaModel(db_instance.Model):
-    __tablename__ = "sicor_gleba"
-    __table__args__ = {"schema": ca.VISIONA_DB_SCHEMA}
+    _tablename_ = "sicor_gleba"
+    _table__args_ = {"schema": ca.VISIONA_DB_SCHEMA}
 
     id = db_instance.Column(db_instance.Integer, primary_key=True, index=True)
     nu_identificador = db_instance.Column(db_instance.Integer)
@@ -22,12 +22,12 @@ class SicorGlebaModel(db_instance.Model):
         db_instance.Integer, ForeignKey("sicor_operacao_por_estado.ref_bacen")
     )
     @classmethod
-    def get_all(cls):
+    def get_glebas_per_ref_bacen(cls, ref_bacen):
         return (
             db_instance.session.query(
                 cls.ref_bacen_FK,
                 cls.nu_ordem_FK,
                 functions.ST_AsText(cls.vl_vertices).label("vl_vertices")
             )
-            .all()
+            .filter(cls.ref_bacen_FK == ref_bacen)
         )
