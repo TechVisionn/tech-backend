@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask
 
 from flaskr.db import config_sql_alchemy
