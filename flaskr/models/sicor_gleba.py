@@ -2,14 +2,13 @@ from geoalchemy2 import Geometry, functions
 from sqlalchemy import ForeignKey
 
 import flaskr.config_app as ca
-
 from flaskr.db import db_instance
 from flaskr.models.sicor_op_estado import SicorOpEstadoModel
 
 
 class SicorGlebaModel(db_instance.Model):
-    _tablename_ = "sicor_gleba"
-    _table__args_ = {"schema": ca.VISIONA_DB_SCHEMA}
+    __tablename__ = "sicor_gleba"
+    __table__args__ = {"schema": ca.VISIONA_DB_SCHEMA}
 
     id = db_instance.Column(db_instance.Integer, primary_key=True, index=True)
     nu_identificador = db_instance.Column(db_instance.Integer)
