@@ -46,4 +46,4 @@ class Saida5Model(db_instance.Model):
     dt_inic_plantio = db_instance.Column(db_instance.String(100))
     vl_juros_enc_finac_posfix = db_instance.Column(db_instance.String(100))
     vl_perc_custo_efet_total = db_instance.Column(db_instance.String(100))
-    cd_contrato_stn = db_instance.Column(db_instance.String(100))                                     
+    cd_contrato_stn = db_instance.Column(db_instance.String(100))                                 
