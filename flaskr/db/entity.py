@@ -37,25 +37,6 @@ class Entity:
 
     # Function for run querys
     def exec_query(self, sql, as_dict=False):
-            self.connect()
-            obj_class = type(self)
-            results = []
-
-            for t in self.cursor.execute(sql):
-                if as_dict:
-                    cols = [column[0] for column in self.cursor.description]
-
-                    # Turn tuples into dicts
-                    tmp_dict = {}
-                    for i in range(len(cols)):
-                        tmp_dict[cols[i]] = t[i]
-
-                    results.append(tmp_dict)
-                else:
-                    results.append(obj_class(*t))
-
-            return results
-# Ajustar
-#   File "C:\Users\ZARRUDA\Desktop\Zaion\API - 6 Semestre\tech-backend\flaskr\db\entity.py", line 44, in exec_query
-#     for t in self.cursor.execute(sql):
-# TypeError: 'int' object is not iterable
+        self.connect()
+        results = self.cursor.execute(sql)
+        return results
