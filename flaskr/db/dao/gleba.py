@@ -1,6 +1,5 @@
 from flaskr.db.entity import Entity
 
-
 # The init_attrs function is a utility function that takes two arguments:
 # obj (an object) and fldsDict (a dictionary). It copies the key-value pairs
 # from the fldsDict dictionary to the obj object's attributes, allowing
