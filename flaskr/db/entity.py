@@ -1,5 +1,6 @@
-import flaskr.db.config_app as config
 import pymysql
+
+import flaskr.db.config_app as config
 
 
 class Entity:
