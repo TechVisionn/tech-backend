@@ -16,7 +16,7 @@ from flaskr.db.entity import Entity
 #         setattr(obj, k, v)
 
 
-class Gleba(Entity):
+class GlebaDao(Entity):
     def __init__(self,
             codigo = 0,
             descricao = ""):  # Add Coluns of table here#
@@ -33,6 +33,6 @@ class Gleba(Entity):
         """
         sql = f"SELECT * FROM atividade"
         print(f"Querying: {sql}")  # Imprimir o SQL para depuração
-        gleba_instance = Gleba()
+        gleba_instance = GlebaDao()
         result = gleba_instance.exec_query(sql)
         return result
