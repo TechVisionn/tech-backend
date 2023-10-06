@@ -20,7 +20,6 @@ def config_jwt_token(app):
     jwt = JWTManager(app)
     
     @jwt.token_in_blocklist_loader
-    #Fazer função para commitar token revogado
     def check_if_token_is_revoked(jwt_header, jwt_payload):
         jti = jwt_payload["jti"]
         revoked_token = db_instance.token.find_one({"jti": jti})

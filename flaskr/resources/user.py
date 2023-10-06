@@ -17,6 +17,7 @@ class UserResource(Resource):
         self.users_instance.insert_one({'user': _user, 'pwd': _pwd})
     
         return make_response({"message": "User create"}, 200)
+
     @jwt_required()
     def get(self):
         user = self.users_instance.find()
