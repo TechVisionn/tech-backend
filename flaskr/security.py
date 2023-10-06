@@ -11,7 +11,7 @@ REFRESH_EXPIRES = timedelta(hours=24)
 
 def config_jwt_token(app):
     # Security with Flast JWT Extended
-    app.config["JWT_SECRET_KEY"] = "8f1948d1-34a2-4e40-a832-266280cc8031"
+    app.config["JWT_SECRET_KEY"] = ""
     app.config["JWT_TOKEN_LOCATION"] = ["headers"]
     app.config["JWT_COOKIE_SECURE"] = False
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
@@ -22,7 +22,7 @@ def config_jwt_token(app):
     @jwt.token_in_blocklist_loader
     def check_if_token_is_revoked(jwt_header, jwt_payload):
         jti = jwt_payload["jti"]
-        revoked_token = db_instance.tokens_revogados.find_one({"jti": jti})
+        revoked_token = db_instance.token.find_one({"jti": jti})
         return revoked_token is not None
 
     return jwt
