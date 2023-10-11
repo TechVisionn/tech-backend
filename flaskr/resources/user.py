@@ -14,7 +14,7 @@ class UserResource(Resource):
         if self.users_instance.find_one({'user': _user}):
             return make_response({"message": "Username already exists"}, 400)
         
-        self.users_instance.insert_one({'user': _user, 'pwd': _pwd})
+        self.users_instance.insert_one({'user': _user, 'pwd': _pwd, 'version_terms': ''})
     
         return make_response({"message": "User create"}, 200)
 
