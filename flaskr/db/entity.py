@@ -31,7 +31,7 @@ class Entity:
                 "user": config.UID,
                 "password": config.PASSWORD,
                 "database": config.DATABASE,
-                "autocommit": True
+                "autocommit": True,
             }
             self.cnxn = pymysql.connect(**connection_params)
             self.cursor = self.cnxn.cursor()
@@ -39,5 +39,8 @@ class Entity:
     # Function for run querys
     def exec_query(self, sql, as_dict=False):
         self.connect()
-        results = self.cursor.execute(sql)
+        self.cursor.execute(sql)
+        if as_dict:
+            self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
+        results = self.cursor.fetchall()
         return results
