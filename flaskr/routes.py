@@ -1,8 +1,9 @@
 from flask_restful import Api
 
 from flaskr.resources.gleba import GlebaResource
+from flaskr.resources.token import TokenRefresherResource, TokenResource
 from flaskr.resources.user import UserResource
-from flaskr.resources.token import TokenResource, TokenRefresherResource
+
 
 def config_app_routes(app):
     api = Api(app)
