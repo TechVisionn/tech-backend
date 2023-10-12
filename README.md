@@ -49,7 +49,7 @@ pip freeze > requirements.txt
 ```
 
 #### Notes
-- You will need to declare the database connection information in the config_app.py file before running the application.
+- You will need to declare the database connection information in the config_app.py and mongo_serve in folder db file before running the application.
 
 - If you change models, you need to migrate to the bank, step by step will be in the next topics
 
