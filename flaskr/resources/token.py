@@ -6,11 +6,10 @@ from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
 )
+from flask_restful import Resource
 
 from flaskr.db.mongo_serve import db_instance
-
 from flaskr.security import ACCESS_EXPIRES
-from flask_restful import Resource
 
 
 class TokenResource(Resource):
@@ -28,7 +27,7 @@ class TokenResource(Resource):
         user = self.user_instance.find_one({"user": _user, "pwd": _pwd})
         if user is None:
             return make_response({"message": "Invalid username or password"}, 401)
-        
+
         latest_term = self.term_instance.find_one(sort=[("version", -1)])
         print(latest_term)
         if latest_term != user["version_term"] or not latest_term:
