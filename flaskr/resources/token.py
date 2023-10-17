@@ -26,13 +26,13 @@ class TokenResource(Resource):
 
         user = self.user_instance.find_one({"user": _user, "pwd": _pwd})
         if user is None:
-            return make_response({"message": "Invalid username or password"}, 401)
+            return make_response({"message": "Invalid username or password"})
 
         latest_term = self.term_instance.find_one(sort=[("version", -1)])
         print(latest_term)
         if latest_term != user["version_term"] or not latest_term:
-            if _term is None or False:
-                return make_response({"message": "User needs to update terms"}, 403)
+            if _term is None or  _term is False:
+                return make_response({"message": "User needs to update terms"})
             else:
                 self.user_instance.update_one(
                     {"_id": user["_id"]},
