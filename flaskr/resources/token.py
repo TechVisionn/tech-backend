@@ -29,10 +29,13 @@ class TokenResource(Resource):
             return make_response({"message": "Invalid username or password"})
 
         latest_term = self.term_instance.find_one(sort=[("version", -1)])
-        print(latest_term)
-        if latest_term != user["version_term"] or not latest_term:
-            if _term is None or  _term is False:
+        if latest_term != user["term"]["version"] or not latest_term:
+            if _term is False and user["term"]["version"] is None:
+                self.user_instance.delete_one({"user": _user, "pwd": _pwd})
+                return make_response({"message": "User is deleted"})
+            elif _term is False and user["term"]["version"] != None:
                 return make_response({"message": "User needs to update terms"})
+            #parei aqui
             else:
                 self.user_instance.update_one(
                     {"_id": user["_id"]},
