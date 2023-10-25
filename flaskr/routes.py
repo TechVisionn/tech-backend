@@ -3,6 +3,7 @@ from flask_restful import Api
 from flaskr.resources.gleba import GlebaResource
 from flaskr.resources.token import TokenRefresherResource, TokenResource
 from flaskr.resources.user import UserResource
+from flaskr.resources.terms import TermsResource
 
 
 def config_app_routes(app):
@@ -10,6 +11,7 @@ def config_app_routes(app):
 
     __setting_route_doc(GlebaResource, "/gleba", api)
     __setting_route_doc(UserResource, "/user", api)
+    __setting_route_doc(TermsResource, "/terms", api)
     __setting_route_doc(TokenResource, "/token", api)
     __setting_route_doc(TokenRefresherResource, '/token/refresh', api)
 
