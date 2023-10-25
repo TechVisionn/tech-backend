@@ -11,6 +11,7 @@ class UserResource(Resource):
     def __init__(self):
         super().__init__()
         self.users_instance = db_instance.user
+        self.user_history = db_instance.history
 
     def post(self):
         _user = request.json.get("_user")
@@ -19,7 +20,28 @@ class UserResource(Resource):
             return make_response({"message": "Username already exists"}, 400)
 
         self.users_instance.insert_one(
-            {"user": _user, "pwd": _pwd, "term": "", "date_accepted_term": ""}
+            {
+                "user": _user,
+                "pwd": _pwd,
+                "date_accepted_term": "",
+                "term": {
+                    "version": "",
+                    "description": "",
+                    "parameters": {"option_one": "", "option_second": ""},
+                }
+            }
+        )
+        self.user_history.insert_one(
+            {
+                "user": _user,
+                "pwd": _pwd,
+                "date_accepted_term": "",
+                "term": {
+                    "version": "",
+                    "description": "",
+                    "parameters": {"option_one": "", "option_second": ""},
+                }
+            }
         )
 
         return make_response({"message": "User create"}, 200)

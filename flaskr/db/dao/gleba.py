@@ -69,8 +69,7 @@ class GlebaDao(Entity):
         AND 
             CAST(REPLACE(VL_LONGITUDE, ',', '.') AS DECIMAL(10, 10)) BETWEEN
             CAST( {lowest_longitude} AS DECIMAL(10, 10)) AND 
-            CAST( {greatest_longitude} AS DECIMAL(10, 10))
-            limit 1000000) AS Glebas
+            CAST( {greatest_longitude} AS DECIMAL(10, 10))) AS Glebas
         JOIN 
             techdata.saida5 S5 ON S5.REF_BACEN = Glebas.REF_BACEN
         LEFT JOIN  
