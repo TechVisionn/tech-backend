@@ -1,13 +1,8 @@
 from datetime import datetime
 
 from flask import make_response, request
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    get_jwt,
-    get_jwt_identity,
-    jwt_required,
-)
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                get_jwt, get_jwt_identity, jwt_required)
 from flask_restful import Resource
 
 from flaskr.db.mongo_serve import db_instance

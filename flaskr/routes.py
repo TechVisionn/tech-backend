@@ -1,9 +1,9 @@
 from flask_restful import Api
 
 from flaskr.resources.gleba import GlebaResource
+from flaskr.resources.terms import TermsResource
 from flaskr.resources.token import TokenRefresherResource, TokenResource
 from flaskr.resources.user import UserResource
-from flaskr.resources.terms import TermsResource
 
 
 def config_app_routes(app):
