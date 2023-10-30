@@ -22,40 +22,52 @@ class TermsResource(Resource):
         _term_option_second = request.json.get("_option_second")
 
         _current_user_id = get_jwt_identity()
-        user = self.user_instance.find_one({"_id": ObjectId(_current_user_id)})
+        user_history = self.user_history.find_one(
+            {"id_user": ObjectId(_current_user_id)}, sort=[("timestamp", -1)]
+        )
+        term = self.term_instance.find_one(user_history["id_term"])
 
         if _term is False:
+            self.user_history.insert_one(
+                {
+                    "id_user": user_history["id_user"],
+                    "id_term": term["_id"],
+                    "accepted_term": _term,
+                    "update_date": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                    "parameters": {
+                        "option_one": False
+                        if _term_option_one is None
+                        else _term_option_one,
+                        "option_second": False
+                        if _term_option_second is None
+                        else _term_option_second,
+                    },
+                }
+            )
             self.user_instance.delete_one({"_id": ObjectId(_current_user_id)})
-            self.user_history.update_many(
-                        {"user": user['name']},
-                        {"$unset": {"user": "", "pwd": ""}},
-                    )
             return make_response({"message": "User is deleted"})
-        
-        if _term == None or _term_option_one == None or _term_option_second == None:
-            return make_response({"message": "User needs to select terms"})
 
         if (
-            _term_option_one == user["term"]["parameters"]["option_one"]
-            and _term_option_second == user["term"]["parameters"]["option_second"]
+            _term_option_one == user_history["parameters"]["option_one"]
+            and _term_option_second == user_history["parameters"]["option_second"]
         ):
             return make_response({"message": "terms equals"})
 
         else:
-            _date_now = datetime.today().strftime("%Y-%m-%d")
-            self.user_instance.update_one(
-                {"_id": ObjectId(_current_user_id)},
+            self.user_history.insert_one(
                 {
-                    "$set": {
-                        "date_accepted_term": _date_now,
-                        "term": {
-                            "parameters": {
-                                "option_one": _term_option_one,
-                                "option_second": _term_option_second,
-                            }
-                        }
-                    }
-                },
+                    "id_user": user_history["id_user"],
+                    "id_term": term["_id"],
+                    "accepted_term": _term,
+                    "update_date": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                    "parameters": {
+                        "option_one": False
+                        if _term_option_one is None
+                        else _term_option_one,
+                        "option_second": False
+                        if _term_option_second is None
+                        else _term_option_second,
+                    },
+                }
             )
-            user_history_data = self.user_instance.find_one({"_id": ObjectId(_current_user_id)})
-            self.user_history.insert_one(user_history_data)
+            return make_response({"message": "terms update"})

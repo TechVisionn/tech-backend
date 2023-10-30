@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from bson import ObjectId
 from flask import make_response, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 get_jwt, get_jwt_identity, jwt_required)
@@ -23,69 +24,78 @@ class TokenResource(Resource):
         _term_option_one = request.json.get("_option_one")
         _term_option_second = request.json.get("_option_second")
 
+        # set
+        latest_term = self.term_instance.find_one(sort=[("version", -1)])
         user = self.user_instance.find_one({"user": _user, "pwd": _pwd})
+        user_history = self.user_history.find_one(
+            {"id_user": user["_id"]}, sort=[("timestamp", -1)]
+        )
+
         if user is None:
             return make_response({"message": "Invalid username or password"})
 
-        latest_term = self.term_instance.find_one(sort=[("version", -1)])
-        if latest_term != user["term"]["version"]:
-            # user does not participate in the application
+        if user_history == None:
             if _term is False:
-                if user["term"]["version"] == "" or None:
-                    self.user_instance.delete_one({"user": _user, "pwd": _pwd})
-                    self.user_history.delete_one({"user": _user, "pwd": _pwd})
-                    return make_response({"message": "User is deleted"})
-                elif user["term"]["version"] != None:
-                    self.user_instance.delete_one({"user": _user, "pwd": _pwd})
-                    self.user_history.update_many(
-                        {"user": _user, "pwd": _pwd},
-                        {"$unset": {"user": "", "pwd": ""}},
-                    )
-                    return make_response({"message": "User is deleted"})
-            # user must accept the terms
-            elif (
-                _term is None
-                and user["term"]["version"] != ""
-                or None
-                or user["term"]["parameters"]["option_one"] != ""
-                or None
-                or user["term"]["parameters"]["option_one"] != ""
-                or None
-            ):
+                self.user_instance.delete_one({"user": _user, "pwd": _pwd})
+                return make_response({"message": "User is deleted"})
+            if _term is None:
                 return make_response({"message": "User needs to update terms"})
-
             else:
-                _date_now = datetime.today().strftime("%Y-%m-%d")
-                self.user_instance.update_one(
-                    {"_id": user["_id"]},
-                    {
-                        "$set": {
-                            "date_accepted_term": _date_now,
-                            "term": {
-                                "version": latest_term,
-                                "parameters": {
-                                    "option_one": _term_option_one,
-                                    "option_second": _term_option_second,
-                                },
-                            },
-                        }
-                    },
-                )
                 self.user_history.insert_one(
                     {
-                        "user": _user,
-                        "pwd": _pwd,
-                        "term": {
-                            "version": latest_term,
-                            "date_accepted": _date_now,
-                            "parameters": {
-                                "option_one": _term_option_one,
-                                "option_second": _term_option_second,
-                            },
+                        "id_user": user["_id"],
+                        "id_term": latest_term["_id"],
+                        "accepted_term": _term,
+                        "update_date": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                        "parameters": {
+                            "option_one": False
+                            if _term_option_one is None
+                            else _term_option_one,
+                            "option_second": False
+                            if _term_option_second is None
+                            else _term_option_second,
                         },
                     }
                 )
-        # create a new token with the user id inside
+                return make_response({"message": "User update"})
+        term = self.term_instance.find_one(user_history["id_term"])
+        if latest_term["version"] != term["version"]:
+            if _term is None:
+                return make_response({"message": "User needs to update terms"})
+            if _term is False:
+                self.user_history.insert_one(
+                    {
+                        "id_user": user["_id"],
+                        "id_term": term["_id"],
+                        "accepted_term": _term,
+                        "update_date": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                        "parameters": {
+                            "option_one": False
+                            if _term_option_one is None
+                            else _term_option_one,
+                            "option_second": False
+                            if _term_option_second is None
+                            else _term_option_second,
+                        },
+                    }
+                )
+                self.user_instance.delete_one({"user": _user, "pwd": _pwd})
+                return make_response({"message": "User is deleted"})
+            else:
+                self.user_history.insert_one(
+                    {
+                        "id_user": user["_id"],
+                        "id_term": term["_id"],
+                        "accepted_term": _term,
+                        "update_date": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                        "parameters": {
+                            "option_one": _term_option_one,
+                            "option_second": _term_option_second,
+                        },
+                    }
+                )
+                return make_response({"message": "User update"})
+
         access_token = create_access_token(identity=str(user["_id"]))
         refresh_token = create_refresh_token(str(user["_id"]))
 
