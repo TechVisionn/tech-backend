@@ -91,9 +91,14 @@ class GlebaDao(Entity):
             S5.DT_FIM_PLANTIO, S5.CD_TIPO_IRRIGACAO, 
             S5.VL_ALIQ_PROAGRO,	S5.CD_TIPO_CULTIVO, 
             S5.VL_JUROS, S5.VL_RECEITA_BRUTA_ESPERADA, 
-            S5.DT_FIM_COLHEITA, S5.VL_PERC_CUSTO_EFET_TOTAL;
+            S5.DT_FIM_COLHEITA, S5.VL_PERC_CUSTO_EFET_TOTAL
+        HAVING
+            CHAR_LENGTH(Coordenadas) <= 2000;
         """
         # print(f"Querying: {sql}")
         gleba_instance = GlebaDao()
         result = gleba_instance.exec_query(sql)
         return result
+
+    def query_return_report():
+        ...

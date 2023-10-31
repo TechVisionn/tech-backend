@@ -5,8 +5,9 @@ from flask_restful import Resource
 from flaskr.db.dao.gleba import GlebaDao
 
 
-# import ast
 class GlebaResource(Resource):
+
+    @jwt_required()
     def post(self):
         lowest_latitude = request.json.get("lowest_latitude")
         greatest_latitude = request.json.get("greatest_latitude")
@@ -31,7 +32,8 @@ class GlebaResource(Resource):
             valor_aliquota = dado[8]
             juros_investimentos = dado[9]
             receita_bruta = float(dado[10])
-            coordenadas = dado[1]
+            coordenadas_str = dado[1]
+            coordenadas = eval(coordenadas_str)
 
             gleba_dict = {
                 "nu_identificador": nu_identificador,
