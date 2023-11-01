@@ -100,5 +100,32 @@ class GlebaDao(Entity):
         result = gleba_instance.exec_query(sql)
         return result
 
-    def query_return_report():
-        ...
+    def query_return_report(self):
+        sql = f"""
+        SELECT
+            S5.DT_EMISSAO AS DATA_EMISSAO_REFBACEN,
+        CASE 
+        WHEN S5.CD_ESTADO = 'SP' THEN 'São Paulo'
+        ELSE S5.CD_ESTADO 
+        END AS ESTADO,
+            GARAN_EMPREEND.DESCRICAO AS TIPO_SEGURO,
+            S5.DT_FIM_PLANTIO AS DATA_PLANTIO,
+            GRAO_IRRIG.DESCRICAO AS TIPO_IRRIGACAO,
+            S5.VL_ALIQ_PROAGRO AS VALOR_ALIQUOTA,
+            GRAO.DESCRICAO AS TIPO_GRAO,
+            S5.VL_JUROS AS JUROS_INVESTIMENTO,
+            S5.VL_RECEITA_BRUTA_ESPERADA AS RECEITA_BRUTA_ESTIMADA,
+            S5.DT_FIM_COLHEITA AS DATA_FIM_COLHEITA,
+            S5.VL_PERC_CUSTO_EFET_TOTAL AS CUSTO_TOTAL
+        FROM
+            techdata.saida5 S5
+            LEFT JOIN  techvision.grao_semente GRAO ON GRAO.CODIGO = S5.CD_TIPO_GRAO_SEMENTE
+            LEFT JOIN  techvision.tipo_irrigacao GRAO_IRRIG ON GRAO_IRRIG.CODIGO = S5.CD_TIPO_IRRIGACAO
+            LEFT JOIN  techvision.tipo_garantia_empreendimento GARAN_EMPREEND ON GARAN_EMPREEND.CODIGO = S5.CD_TIPO_SEGURO
+        WHERE
+            GRAO.DESCRICAO = 'Grão/Consumo'
+            AND S5.REF_BACEN = 514693118
+        """
+        gleba_instance = GlebaDao()
+        result = gleba_instance.exec_query(sql)
+        return result
