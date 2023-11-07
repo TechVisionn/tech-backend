@@ -7,7 +7,6 @@ from flaskr.db.dao.gleba import GlebaDao
 
 class GlebaResource(Resource):
 
-    @jwt_required()
     def post(self):
         lowest_latitude = request.json.get("lowest_latitude")
         greatest_latitude = request.json.get("greatest_latitude")
@@ -31,7 +30,7 @@ class GlebaResource(Resource):
             tipo_grao = dado[7]
             valor_aliquota = dado[8]
             juros_investimentos = dado[9]
-            receita_bruta = float(dado[10])
+            #receita_bruta = float(dado[10])
             coordenadas_str = dado[1]
             coordenadas = eval(coordenadas_str)
 
@@ -46,7 +45,7 @@ class GlebaResource(Resource):
                 "tipo_grao": tipo_grao,
                 "valor_aliquota": valor_aliquota,
                 "juros_investimentos": juros_investimentos,
-                "receita_bruta": receita_bruta,
+                #"receita_bruta": receita_bruta,
                 "coordenadas": coordenadas,
             }
 
