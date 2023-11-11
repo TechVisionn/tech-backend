@@ -1,4 +1,7 @@
+import redis
+
 from flaskr.db.entity import Entity
+from flaskr.db.redis_server import redis_available, redis_server
 
 # The init_attrs function is a utility function that takes two arguments:
 # obj (an object) and fldsDict (a dictionary). It copies the key-value pairs
@@ -25,6 +28,17 @@ class GlebaDao(Entity):
     def query_return_land(
         self, lowest_latitude, greatest_latitude, lowest_longitude, greatest_longitude
     ):
+        cache_key = f"gleba:{lowest_latitude}:{greatest_latitude}:{lowest_longitude}:{greatest_longitude}"
+
+        try:
+            if redis_available:
+                cached_data = redis_server.get(cache_key)
+                if cached_data:
+                    result = cached_data
+                    return eval(result)
+        except redis.ConnectionError:
+            print("Não foi possível conectar ao servidor Redis")
+
         """
         Catch everything with limit
         """
@@ -93,6 +107,11 @@ class GlebaDao(Entity):
         # print(f"Querying: {sql}")
         gleba_instance = GlebaDao()
         result = gleba_instance.exec_query(sql)
+        try:
+            if redis_available:
+                redis_server.set(cache_key, str(result))
+        except redis.ConnectionError:
+            print("Não foi possível conectar ao servidor Redis")
         return result
 
     def query_return_report(self):
