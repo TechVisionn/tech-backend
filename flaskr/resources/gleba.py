@@ -6,7 +6,8 @@ from flaskr.db.dao.gleba import GlebaDao
 
 
 class GlebaResource(Resource):
-
+    
+    @jwt_required()
     def post(self):
         lowest_latitude = request.json.get("lowest_latitude")
         greatest_latitude = request.json.get("greatest_latitude")

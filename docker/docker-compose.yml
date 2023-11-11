@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  tech-redis:
+    image: redis
+    ports:
+      - "6380:6380"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --port 6380
+
+volumes:
+  redis-data:
