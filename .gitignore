@@ -289,3 +289,7 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,intellij,visualstudiocode
 .DS_Store
+
+#credentials
+config_mongo.json
+config_mysql.json
