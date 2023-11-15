@@ -5,15 +5,16 @@ from flask import make_response, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 
-from flaskr.db.mongo_serve import db_instance
+from flaskr.db.mongo_serve import conn_mongo_main
 
 
 class TermsResource(Resource):
     def __init__(self):
         super().__init__()
-        self.user_instance = db_instance.user
-        self.user_history = db_instance.history
-        self.term_instance = db_instance.Term
+        db_instance_main = conn_mongo_main()
+        self.user_instance = db_instance_main.user
+        self.user_history = db_instance_main.history
+        self.term_instance = db_instance_main.Term
 
     @jwt_required()
     def post(self):

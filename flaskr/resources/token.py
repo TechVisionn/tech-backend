@@ -2,20 +2,31 @@ from datetime import datetime
 
 from bson import ObjectId
 from flask import make_response, request
-from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                get_jwt, get_jwt_identity, jwt_required)
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+)
 from flask_restful import Resource
 
-from flaskr.db.mongo_serve import db_instance
+from flaskr.db.mongo_serve import conn_mongo_main, conn_mongo_validation
 
 
 class TokenResource(Resource):
     def __init__(self):
         super().__init__()
-        self.token_instance = db_instance.token
-        self.user_instance = db_instance.user
-        self.user_history = db_instance.history
-        self.term_instance = db_instance.Term
+
+        db_instance_main = conn_mongo_main()
+        db_instance_validation = conn_mongo_validation()
+
+        self.token_instance = db_instance_main.token
+        self.user_instance = db_instance_main.user
+        self.user_history = db_instance_main.history
+        self.term_instance = db_instance_main.Term
+
+        self.validation_instance = db_instance_validation.validation
 
     def post(self):
         _user = request.json.get("_user")
@@ -59,10 +70,11 @@ class TokenResource(Resource):
                 )
                 return make_response({"message": "User update"})
         term = self.term_instance.find_one(user_history["id_term"])
-        if latest_term["version"] != term["version"]:
+        if latest_term["version"] != term["version"] or _term is False:
             if _term is None:
                 return make_response({"message": "User needs to update terms"})
             if _term is False:
+                #inserir no validation também
                 self.user_history.insert_one(
                     {
                         "id_user": user["_id"],
