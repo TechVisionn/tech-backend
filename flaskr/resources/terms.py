@@ -5,16 +5,21 @@ from flask import make_response, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 
-from flaskr.db.mongo_serve import conn_mongo_main
+from flaskr.db.mongo_serve import conn_mongo_main, conn_mongo_validation
 
 
 class TermsResource(Resource):
     def __init__(self):
         super().__init__()
+
         db_instance_main = conn_mongo_main()
+        db_instance_validation = conn_mongo_validation()
+
         self.user_instance = db_instance_main.user
         self.user_history = db_instance_main.history
         self.term_instance = db_instance_main.Term
+
+        self.validation_instance = db_instance_validation.validation
 
     @jwt_required()
     def post(self):
@@ -43,6 +48,13 @@ class TermsResource(Resource):
                         if _term_option_second is None
                         else _term_option_second,
                     },
+                }
+            )
+            self.validation_instance.insert_one(
+                {
+                    "id_user": ObjectId(_current_user_id),
+                    "id_term": term["_id"],
+                    "date_of_refusal": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
                 }
             )
             self.user_instance.delete_one({"_id": ObjectId(_current_user_id)})

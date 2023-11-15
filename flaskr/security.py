@@ -3,8 +3,7 @@ from datetime import timedelta
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
-from flaskr.db.mongo_serve import db_instance
-
+from flaskr.db.mongo_serve import conn_mongo_main
 
 ACCESS_EXPIRES = timedelta(hours=12)
 REFRESH_EXPIRES = timedelta(hours=24)
@@ -21,6 +20,7 @@ def config_jwt_token(app):
     
     @jwt.token_in_blocklist_loader
     def check_if_token_is_revoked(jwt_header, jwt_payload):
+        db_instance = conn_mongo_main()
         jti = jwt_payload["jti"]
         revoked_token = db_instance.token.find_one({"jti": jti})
         return revoked_token is not None

@@ -2,13 +2,8 @@ from datetime import datetime
 
 from bson import ObjectId
 from flask import make_response, request
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    get_jwt,
-    get_jwt_identity,
-    jwt_required,
-)
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                get_jwt, get_jwt_identity, jwt_required)
 from flask_restful import Resource
 
 from flaskr.db.mongo_serve import conn_mongo_main, conn_mongo_validation
@@ -74,7 +69,6 @@ class TokenResource(Resource):
             if _term is None:
                 return make_response({"message": "User needs to update terms"})
             if _term is False:
-                #inserir no validation também
                 self.user_history.insert_one(
                     {
                         "id_user": user["_id"],
@@ -89,6 +83,15 @@ class TokenResource(Resource):
                             if _term_option_second is None
                             else _term_option_second,
                         },
+                    }
+                )
+                self.validation_instance.insert_one(
+                    {
+                        "id_user": user["_id"],
+                        "id_term": term["_id"],
+                        "date_of_refusal": datetime.today().strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        ),
                     }
                 )
                 self.user_instance.delete_one({"user": _user, "pwd": _pwd})
