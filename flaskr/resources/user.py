@@ -4,12 +4,13 @@ from flask import make_response, request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 
-from flaskr.db.mongo_serve import db_instance
+from flaskr.db.mongo_serve import conn_mongo_main
 
 
 class UserResource(Resource):
     def __init__(self):
         super().__init__()
+        db_instance = conn_mongo_main()
         self.user_instance = db_instance.user
         self.user_history = db_instance.history
 
@@ -19,12 +20,7 @@ class UserResource(Resource):
         if self.user_instance.find_one({"user": _user}):
             return make_response({"message": "Username already exists"}, 400)
 
-        self.user_instance.insert_one(
-            {
-                "user": _user,
-                "pwd": _pwd
-            }
-        )
+        self.user_instance.insert_one({"user": _user, "pwd": _pwd})
         return make_response({"message": "User create"}, 200)
 
     @jwt_required()
