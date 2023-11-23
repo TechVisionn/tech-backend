@@ -2,7 +2,7 @@ from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 
-from flaskr.db.dao.gleba import GlebaDao
+from flaskr.db.dao.data import GlebaDao
 
 
 class GlebaResource(Resource):
