@@ -16,11 +16,12 @@ class UserResource(Resource):
 
     def post(self):
         _user = request.json.get("_user")
+        _email = request.json.get("_email")
         _pwd = request.json.get("_pwd")
         if self.user_instance.find_one({"user": _user}):
             return make_response({"message": "Username already exists"}, 400)
 
-        self.user_instance.insert_one({"user": _user, "pwd": _pwd})
+        self.user_instance.insert_one({"user": _user, "email": _email, "pwd": _pwd})
         return make_response({"message": "User create"}, 200)
 
     @jwt_required()

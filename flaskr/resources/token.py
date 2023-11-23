@@ -2,8 +2,13 @@ from datetime import datetime
 
 from bson import ObjectId
 from flask import make_response, request
-from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                get_jwt, get_jwt_identity, jwt_required)
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+)
 from flask_restful import Resource
 
 from flaskr.db.mongo_serve import conn_mongo_main, conn_mongo_validation
@@ -25,6 +30,7 @@ class TokenResource(Resource):
 
     def post(self):
         _user = request.json.get("_user")
+        _email = request.json.get("_email")
         _pwd = request.json.get("_pwd")
         _term = request.json.get("_term")
         _term_option_one = request.json.get("_option_one")
@@ -32,7 +38,9 @@ class TokenResource(Resource):
 
         # set
         latest_term = self.term_instance.find_one(sort=[("version", -1)])
-        user = self.user_instance.find_one({"user": _user, "pwd": _pwd})
+        user = self.user_instance.find_one(
+            {"user": _user, "email": _email, "pwd": _pwd}
+        )
         user_history = self.user_history.find_one(
             {"id_user": user["_id"]}, sort=[("timestamp", -1)]
         )
@@ -42,7 +50,9 @@ class TokenResource(Resource):
 
         if user_history == None:
             if _term is False:
-                self.user_instance.delete_one({"user": _user, "pwd": _pwd})
+                self.user_instance.delete_one(
+                    {"user": _user, "email": _email, "pwd": _pwd}
+                )
                 return make_response({"message": "User is deleted"})
             if _term is None:
                 return make_response({"message": "User needs to update terms"})
@@ -94,7 +104,9 @@ class TokenResource(Resource):
                         ),
                     }
                 )
-                self.user_instance.delete_one({"user": _user, "pwd": _pwd})
+                self.user_instance.delete_one(
+                    {"user": _user, "email": _email, "pwd": _pwd}
+                )
                 return make_response({"message": "User is deleted"})
             else:
                 self.user_history.insert_one(

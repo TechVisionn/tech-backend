@@ -1,7 +1,13 @@
-import redis
+# ========================== Data Access Classes ==========================
+# ATTENTION:
+#   All classes that refers to a DB table shall:
+#       1) Extend the class Entity define in entity.py
+#       2) Have the exact name of the table in DB (is not case sensitive)
+#       3) Have all the DB table columns in the __init__(...) method with default values.
+#           (The parameters shall have exactly the same name of the columns)
+#       4) Have the "id" field, with this exact name
+# ========================== Data Access Classes ==========================
 
-from flaskr.db.entity import Entity
-from flaskr.db.redis_server import redis_available, redis_server
 
 # The init_attrs function is a utility function that takes two arguments:
 # obj (an object) and fldsDict (a dictionary). It copies the key-value pairs
@@ -10,6 +16,11 @@ from flaskr.db.redis_server import redis_available, redis_server
 # ​​provided in the dictionary. The "self" key is deleted from the fldsDict
 # dictionary to avoid assigning the object itself as an attribute.
 
+
+import redis
+
+from flaskr.db.entity import Entity
+from flaskr.db.redis_server import redis_available, redis_server
 
 # # Utility function
 # def init_attrs(obj, fldsDict):
@@ -114,32 +125,16 @@ class GlebaDao(Entity):
             print("Não foi possível conectar ao servidor Redis")
         return result
 
-    def query_return_report(self):
-        sql = f"""
-        SELECT
-            S5.DT_EMISSAO AS DATA_EMISSAO_REFBACEN,
-        CASE 
-        WHEN S5.CD_ESTADO = 'SP' THEN 'São Paulo'
-        ELSE S5.CD_ESTADO 
-        END AS ESTADO,
-            GARAN_EMPREEND.DESCRICAO AS TIPO_SEGURO,
-            S5.DT_FIM_PLANTIO AS DATA_PLANTIO,
-            GRAO_IRRIG.DESCRICAO AS TIPO_IRRIGACAO,
-            S5.VL_ALIQ_PROAGRO AS VALOR_ALIQUOTA,
-            GRAO.DESCRICAO AS TIPO_GRAO,
-            S5.VL_JUROS AS JUROS_INVESTIMENTO,
-            S5.VL_RECEITA_BRUTA_ESPERADA AS RECEITA_BRUTA_ESTIMADA,
-            S5.DT_FIM_COLHEITA AS DATA_FIM_COLHEITA,
-            S5.VL_PERC_CUSTO_EFET_TOTAL AS CUSTO_TOTAL
-        FROM
-            techdata.saida5 S5
-            LEFT JOIN  techvision.grao_semente GRAO ON GRAO.CODIGO = S5.CD_TIPO_GRAO_SEMENTE
-            LEFT JOIN  techvision.tipo_irrigacao GRAO_IRRIG ON GRAO_IRRIG.CODIGO = S5.CD_TIPO_IRRIGACAO
-            LEFT JOIN  techvision.tipo_garantia_empreendimento GARAN_EMPREEND ON GARAN_EMPREEND.CODIGO = S5.CD_TIPO_SEGURO
-        WHERE
-            GRAO.DESCRICAO = 'Grão/Consumo'
-            AND S5.REF_BACEN = 514693118
+
+class PrevisaoSolo(Entity):
+    def __init__(self):
+        super().__init__()
+        
+    def get_all_stemporal(self):
+        
+        sql = """
+        SELECT * from previsao_solo
         """
-        gleba_instance = GlebaDao()
-        result = gleba_instance.exec_query(sql)
+        previsao_instance = PrevisaoSolo()
+        result = previsao_instance.exec_query(sql)
         return result
