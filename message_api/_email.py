@@ -5,8 +5,8 @@ from email.message import EmailMessage
 from email.utils import make_msgid
 from smtplib import SMTP
 
-SMTP_HOST = ''
-SMTP_PORT = 587
+SMTP_HOST = 'sandbox.smtp.mailtrap.io'
+SMTP_PORT = 2525
 
 
 def send_email(from_addr, to_addrs, cc_addrs=[], bcc_addrs=[], subject='',
@@ -77,6 +77,7 @@ def send_email(from_addr, to_addrs, cc_addrs=[], bcc_addrs=[], subject='',
     try:
         # Send email using the configured SMTP server
         with SMTP(host=SMTP_HOST, port=SMTP_PORT) as smtp_conn:
+            smtp_conn.login('','')
             smtp_conn.set_debuglevel(2)
             smtp_conn.send_message(msg)
 
@@ -84,4 +85,3 @@ def send_email(from_addr, to_addrs, cc_addrs=[], bcc_addrs=[], subject='',
     except Exception:
         logging.error(traceback.format_exc())
         return False, traceback.format_exc()
-    
