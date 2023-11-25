@@ -293,3 +293,6 @@ cython_debug/
 #credentials
 config_mongo.json
 config_mysql.json
+
+#temp files and folder
+temp_folder

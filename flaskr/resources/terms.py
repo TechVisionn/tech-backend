@@ -58,6 +58,7 @@ class TermsResource(Resource):
                 }
             )
             self.user_instance.delete_one({"_id": ObjectId(_current_user_id)})
+            self.user_validation.delete_one({"id_user": ObjectId(_current_user_id)})
             return make_response({"message": "User is deleted"})
 
         if (
