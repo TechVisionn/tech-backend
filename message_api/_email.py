@@ -77,7 +77,7 @@ def send_email(from_addr, to_addrs, cc_addrs=[], bcc_addrs=[], subject='',
     try:
         # Send email using the configured SMTP server
         with SMTP(host=SMTP_HOST, port=SMTP_PORT) as smtp_conn:
-            smtp_conn.login('','')
+            smtp_conn.login('e3a3b7caf7919d','8ccce2ef1297bf')
             smtp_conn.set_debuglevel(2)
             smtp_conn.send_message(msg)
 
