@@ -6,9 +6,9 @@ from flaskr.db.dao.data import PrevisaoSolo
 
 class StemporalResource(Resource):
     @jwt_required
-    def get(self):
+    def post(self, ref_bacen):
         previsao_instance = PrevisaoSolo()
-        stemporal = previsao_instance.get_all_stemporal()
+        stemporal = previsao_instance.get_all_stemporal(ref_bacen)
 
         format_stemporal = []
         for dado in stemporal:

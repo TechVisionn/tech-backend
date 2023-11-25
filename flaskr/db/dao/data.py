@@ -130,7 +130,7 @@ class PrevisaoSolo(Entity):
     def __init__(self):
         super().__init__()
         
-    def get_all_stemporal(self):
+    def get_all_stemporal(self, ref_bacen):
         
         sql = """
         SELECT * from previsao_solo
