@@ -83,5 +83,4 @@ def _send_email():
     
     return POST_RESP_SUCCESS, POST_RESP_SUCCESS_STATUS
 if __name__ == "__main__":
-    app.run(debug=True, port=8081)
-    # serve(app, port=8081, threads=2)
+    serve(app, port=8081, threads=2)

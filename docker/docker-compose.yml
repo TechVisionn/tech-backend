@@ -1,6 +1,18 @@
 version: '3'
 
 services:
+  tecb-backend-app:
+    container_name: tech-backend-app
+    image: tech-backend-app
+    build:
+      context: ../
+      dockerfile: ./docker/message_api.dockerfile
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_APP=message_api/app.py
+
   tech-redis:
     image: redis
     ports:

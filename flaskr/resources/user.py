@@ -1,10 +1,11 @@
 import json
 
+from bson import ObjectId
 from flask import make_response, request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 
-from flaskr.db.mongo_serve import conn_mongo_main
+from flaskr.db.mongo_serve import conn_mongo_main, conn_mongo_validation
 
 
 class UserResource(Resource):
@@ -12,7 +13,7 @@ class UserResource(Resource):
         super().__init__()
         db_instance = conn_mongo_main()
         self.user_instance = db_instance.user
-        self.user_history = db_instance.history
+        self.user_validation_instance = db_instance.users
 
     def post(self):
         _user = request.json.get("_user")
@@ -22,6 +23,9 @@ class UserResource(Resource):
             return make_response({"message": "Username already exists"}, 400)
 
         self.user_instance.insert_one({"user": _user, "email": _email, "pwd": _pwd})
+        self.user_instance.insert_one(
+            {"id_user": ObjectId(_user["_id"]), "email": _email}
+        )
         return make_response({"message": "User create"}, 200)
 
     @jwt_required()

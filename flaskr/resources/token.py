@@ -2,13 +2,8 @@ from datetime import datetime
 
 from bson import ObjectId
 from flask import make_response, request
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    get_jwt,
-    get_jwt_identity,
-    jwt_required,
-)
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                get_jwt, get_jwt_identity, jwt_required)
 from flask_restful import Resource
 
 from flaskr.db.mongo_serve import conn_mongo_main, conn_mongo_validation
@@ -26,6 +21,7 @@ class TokenResource(Resource):
         self.user_history = db_instance_main.history
         self.term_instance = db_instance_main.Term
 
+        self.user_validation = db_instance_validation.users
         self.validation_instance = db_instance_validation.validation
 
     def post(self):
@@ -52,6 +48,9 @@ class TokenResource(Resource):
             if _term is False:
                 self.user_instance.delete_one(
                     {"user": _user, "email": _email, "pwd": _pwd}
+                )
+                self.user_validation.delete_one(
+                    {"id_user": ObjectId(_user["_id"]), "email": _email}
                 )
                 return make_response({"message": "User is deleted"})
             if _term is None:
@@ -106,6 +105,9 @@ class TokenResource(Resource):
                 )
                 self.user_instance.delete_one(
                     {"user": _user, "email": _email, "pwd": _pwd}
+                )
+                self.user_validation.delete_one(
+                    {"id_user": ObjectId(_user["_id"]), "email": _email}
                 )
                 return make_response({"message": "User is deleted"})
             else:
