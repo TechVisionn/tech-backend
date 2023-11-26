@@ -129,11 +129,17 @@ class GlebaDao(Entity):
 class PrevisaoSolo(Entity):
     def __init__(self):
         super().__init__()
-        
-    def get_all_stemporal(self, ref_bacen):
-        
-        sql = """
-        SELECT * from previsao_solo
+
+    def get_stemporal(self, ref_bacen):
+        sql = f"""
+        SELECT
+            CONCAT('[', GROUP_CONCAT(DISTINCT DataTeste), ']') AS DataTeste,
+            CONCAT('[', GROUP_CONCAT(DISTINCT NDVIReal), ']') AS NDVIReal,
+            CONCAT('[', GROUP_CONCAT(DISTINCT Previsao), ']') AS Previsao
+        FROM 
+            techvision.previsao_solo
+        WHERE 
+            Ref_Bacen = {ref_bacen};
         """
         previsao_instance = PrevisaoSolo()
         result = previsao_instance.exec_query(sql)
