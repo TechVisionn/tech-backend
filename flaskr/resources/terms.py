@@ -19,6 +19,7 @@ class TermsResource(Resource):
         self.user_history = db_instance_main.history
         self.term_instance = db_instance_main.Term
 
+        self.user_validation = db_instance_validation.users
         self.validation_instance = db_instance_validation.validation
 
     @jwt_required()

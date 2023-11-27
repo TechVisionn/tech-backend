@@ -23,9 +23,6 @@ class UserResource(Resource):
             return make_response({"message": "Username already exists"}, 400)
 
         self.user_instance.insert_one({"user": _user, "email": _email, "pwd": _pwd})
-        self.user_instance.insert_one(
-            {"id_user": ObjectId(_user["_id"]), "email": _email}
-        )
         return make_response({"message": "User create"}, 200)
 
     @jwt_required()

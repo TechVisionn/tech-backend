@@ -2,8 +2,13 @@ from datetime import datetime
 
 from bson import ObjectId
 from flask import make_response, request
-from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                get_jwt, get_jwt_identity, jwt_required)
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+)
 from flask_restful import Resource
 
 from flaskr.db.mongo_serve import conn_mongo_main, conn_mongo_validation
@@ -49,9 +54,6 @@ class TokenResource(Resource):
                 self.user_instance.delete_one(
                     {"user": _user, "email": _email, "pwd": _pwd}
                 )
-                self.user_validation.delete_one(
-                    {"id_user": ObjectId(_user["_id"]), "email": _email}
-                )
                 return make_response({"message": "User is deleted"})
             if _term is None:
                 return make_response({"message": "User needs to update terms"})
@@ -71,6 +73,9 @@ class TokenResource(Resource):
                             else _term_option_second,
                         },
                     }
+                )
+                self.user_validation.insert_one(
+                    {"id_user": ObjectId(user["_id"]), "email": _email}
                 )
                 return make_response({"message": "User update"})
         term = self.term_instance.find_one(user_history["id_term"])
@@ -107,7 +112,7 @@ class TokenResource(Resource):
                     {"user": _user, "email": _email, "pwd": _pwd}
                 )
                 self.user_validation.delete_one(
-                    {"id_user": ObjectId(_user["_id"]), "email": _email}
+                    {"id_user": ObjectId(user["_id"]), "email": _email}
                 )
                 return make_response({"message": "User is deleted"})
             else:
@@ -124,7 +129,6 @@ class TokenResource(Resource):
                     }
                 )
                 return make_response({"message": "User update"})
-
         access_token = create_access_token(identity=str(user["_id"]))
         refresh_token = create_refresh_token(str(user["_id"]))
 
